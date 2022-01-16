@@ -2,7 +2,7 @@
 import numpy as np
 import cv2
 import math
-
+import time
 from button import Button
 
 # Open Camera
@@ -14,30 +14,34 @@ buttonListValues = [['7','8','9','*'],
                     ['0','/','.','=']
                     ]
 
-
+pTime=0
 for x in range(4):
     for y in range(4):
-        xpos=x*75 +100
-        ypos=y*75 +100
+        xpos=x*75 
+        ypos=y*75 
         buttonList.append(Button((xpos,ypos),75,75,buttonListValues[y][x]))
 
 button1=Button((100,100),50,50,'7')
-
+auxStart=[]
+auxEnd=0
+auxFar=0
+flag=False
+exist=True
 while capture.isOpened():
 
     # Capture frames from the camera
     ret, frame = capture.read()
     frame=cv2.flip(frame,1)
-
+    cv2.circle(frame,(260,260),5,(0,0,0))
     cv2.rectangle(frame,(100,25),(400,100),(0,0,0),2)
    
-    for button in buttonList:
-        button.draw(frame)
+ 
 
     # Get hand data from the rectangle sub window
     cv2.rectangle(frame, (100, 100), (400, 400), (0, 255, 0), 0)
     crop_image = frame[100:400, 100:400]
-    
+    for button in buttonList:
+        button.draw(crop_image)
     # Apply Gaussian blur
     blur = cv2.GaussianBlur(crop_image, (3, 3), 0)
 
@@ -97,16 +101,39 @@ while capture.isOpened():
             a = math.sqrt((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2)
             b = math.sqrt((far[0] - start[0]) ** 2 + (far[1] - start[1]) ** 2)
             c = math.sqrt((end[0] - far[0]) ** 2 + (end[1] - far[1]) ** 2)
-            angle = (math.acos((b ** 2 + c ** 2 - a ** 2) / (2 * b * c)) * 180) / 3.14
-
+            angle = int((math.acos((b ** 2 + c ** 2 - a ** 2) / (2 * b * c)) * 180) / 3.14)
+            cv2.line(crop_image, start, end, [0, 255, 0], 2)
+            # print(start[0])
+            if angle < 30:
+                flag=False
+                exist=True
+                auxStart=start
+                auxEnd=end
+                auxFar=far
+                cv2.circle(crop_image, start, 5, [255, 0, 0], -1)
+                cv2.circle(crop_image, end, 5, [255, 0, 0], -1)
+                cv2.circle(crop_image, far, 5, [0, 0, 255], -1)
+                for button in buttonList:
+                    button.getValue(auxStart[0],auxStart[1],angle)
+                # print(int(angle))
+            else:
+                exist=False
+           
             
 
-            cv2.line(crop_image, start, end, [0, 255, 0], 2)
 
+        # if exist==False :
+            
+            
     except:
         pass
+    
 
-   
+
+    cTime=time.time()
+    fps=1/(cTime-pTime)
+    pTime=cTime
+    cv2.putText(frame,str(int(fps)),(10,70),cv2.FONT_HERSHEY_COMPLEX,1,(255,0,255),3)
 
     # Show required images
     cv2.imshow("Gesture", frame)

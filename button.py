@@ -15,6 +15,7 @@ class Button:
         halfHeight=self.height/2
         cv2.putText(img,self.value,(int(self.pos[0]+halfWidth-10),int(self.pos[1]+halfHeight+10)),cv2.FONT_HERSHEY_PLAIN,2,(0,0,0),2)
 
-    def clickEvent(self,x,y):
-        if self.pos[0] <x<x< self.pos[0]+self.width:
-            pass
+    def getValue(self,x,y,angle):
+        if self.pos[0] <x<self.pos[0]+self.width and \
+            self.pos[1] <y<self.pos[1]+self.height:
+                print('valor:',self.value,' angle:',angle)
