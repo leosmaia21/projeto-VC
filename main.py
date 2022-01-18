@@ -35,8 +35,6 @@ while capture.isOpened():
     cv2.circle(frame,(260,260),5,(0,0,0))
     cv2.rectangle(frame,(100,25),(400,100),(0,0,0),2)
    
- 
-
     # Get hand data from the rectangle sub window
     cv2.rectangle(frame, (100, 100), (400, 400), (0, 255, 0), 0)
     crop_image = frame[100:400, 100:400]
@@ -105,19 +103,24 @@ while capture.isOpened():
             cv2.line(crop_image, start, end, [0, 255, 0], 2)
             # print(start[0])
             if angle < 30:
-                flag=False
-                exist=True
-                auxStart=start
-                auxEnd=end
-                auxFar=far
-                cv2.circle(crop_image, start, 5, [255, 0, 0], -1)
-                cv2.circle(crop_image, end, 5, [255, 0, 0], -1)
-                cv2.circle(crop_image, far, 5, [0, 0, 255], -1)
-                for button in buttonList:
-                    button.getValue(auxStart[0],auxStart[1],angle)
+                if(flag==False):
+                    
+                    auxStart=start
+                    auxEnd=end
+                    auxFar=far
+                    cv2.circle(crop_image, start, 5, [255, 0, 0], -1)
+                    cv2.circle(crop_image, end, 5, [255, 0, 0], -1)
+                    cv2.circle(crop_image, far, 5, [0, 0, 255], -1)
+                    for button in buttonList:
+                        x=button.getValue(auxStart[0],auxStart[1],angle)
+                        if x != 'x':
+                            print(x)
+
+
+                    flag=True
                 # print(int(angle))
             else:
-                exist=False
+                flag=False
            
             
 

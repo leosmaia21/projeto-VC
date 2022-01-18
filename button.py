@@ -19,3 +19,6 @@ class Button:
         if self.pos[0] <x<self.pos[0]+self.width and \
             self.pos[1] <y<self.pos[1]+self.height:
                 print('value:',self.value,' angle:',angle)
+                return self.value
+        else:
+            return 'x'
