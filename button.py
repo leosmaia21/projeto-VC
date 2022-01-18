@@ -18,4 +18,4 @@ class Button:
     def getValue(self,x,y,angle):
         if self.pos[0] <x<self.pos[0]+self.width and \
             self.pos[1] <y<self.pos[1]+self.height:
-                print('valor:',self.value,' angle:',angle)
+                print('value:',self.value,' angle:',angle)
