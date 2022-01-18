@@ -23,8 +23,9 @@ for x in range(4):
 
 button1=Button((100,100),50,50,'7')
 auxStart=[]
-auxEnd=0
+auxEnd=0j
 auxFar=0
+result=' '
 flag=False
 exist=True
 while capture.isOpened():
@@ -102,9 +103,8 @@ while capture.isOpened():
             angle = int((math.acos((b ** 2 + c ** 2 - a ** 2) / (2 * b * c)) * 180) / 3.14)
             cv2.line(crop_image, start, end, [0, 255, 0], 2)
             # print(start[0])
-            if angle < 30:
-                if(flag==False):
-                    
+            if(flag == False):
+                if angle < 30:
                     auxStart=start
                     auxEnd=end
                     auxFar=far
@@ -114,30 +114,33 @@ while capture.isOpened():
                     for button in buttonList:
                         x=button.getValue(auxStart[0],auxStart[1],angle)
                         if x != 'x':
-                            print(x)
-
-
+                            result=result+str(x)
+                       
                     flag=True
-                # print(int(angle))
-            else:
-                flag=False
+                    # print(int(angle))
+
+            if (angle > 30) : 
+                flag = False
            
             
 
 
         # if exist==False :
             
-            
+        
     except:
         pass
     
+    if result[len(result)-1]=='=':
+        print('resultado:',eval(result[:-1]))
 
+        break
 
     cTime=time.time()
     fps=1/(cTime-pTime)
     pTime=cTime
     cv2.putText(frame,str(int(fps)),(10,70),cv2.FONT_HERSHEY_COMPLEX,1,(255,0,255),3)
-
+    print(result)
     # Show required images
     cv2.imshow("Gesture", frame)
     all_image = np.hstack((drawing, crop_image))
