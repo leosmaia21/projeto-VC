@@ -35,15 +35,14 @@ hasAngle=False
 myEquation=' '
 while capture.isOpened():
 
-    # Capture frames from the camera
     ret, frame = capture.read()
     frame=cv2.flip(frame,1)
     cv2.circle(frame,(260,260),5,(0,0,0))
-    cv2.rectangle(frame,(100,25),(400,100),(0,0,0),2)
+    cv2.rectangle(frame,(100,0),(400,75),(0,0,0),2)
    
     # Get hand data from the rectangle sub window
-    cv2.rectangle(frame, (100, 100), (400, 400), (0, 255, 0), 0)
-    crop_image = frame[100:400, 100:400]
+    cv2.rectangle(frame, (0, 0), (500, 500), (0, 255, 0), 0)
+    crop_image = frame[0:500, 0:500]
     for button in buttonList:
         button.draw(crop_image)
     # Apply Gaussian blur
