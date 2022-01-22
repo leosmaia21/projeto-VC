@@ -35,14 +35,15 @@ hasAngle=False
 myEquation=' '
 while capture.isOpened():
 
+    # Capture frames from the camera
     ret, frame = capture.read()
     frame=cv2.flip(frame,1)
     cv2.circle(frame,(260,260),5,(0,0,0))
-    cv2.rectangle(frame,(100,0),(400,75),(0,0,0),2)
+    cv2.rectangle(frame,(100,25),(400,100),(0,0,0),2)
    
     # Get hand data from the rectangle sub window
-    cv2.rectangle(frame, (0, 0), (500, 500), (0, 255, 0), 0)
-    crop_image = frame[0:500, 0:500]
+    cv2.rectangle(frame, (100, 100), (400, 400), (0, 255, 0), 0)
+    crop_image = frame[100:400, 100:400]
     for button in buttonList:
         button.draw(crop_image)
     # Apply Gaussian blur
@@ -93,8 +94,6 @@ while capture.isOpened():
 
         # Use cosine rule to find angle of the far point from the start and end point i.e. the convex points (the finger
         # tips) for all defects
-        count_defects = 0
-
         for i in range(defects.shape[0]):
             s, e, f, d = defects[i, 0]
             start = tuple(contour[s][0])
@@ -108,7 +107,7 @@ while capture.isOpened():
             cv2.line(crop_image, start, end, [0, 255, 0], 2)
             # print(start[0])
             print(' angle:',angle)
-            if angle<30:
+            if angle<45:
                hasAngle=True
                auxStart=start
                break
@@ -125,7 +124,6 @@ while capture.isOpened():
                 k=1
             elif k==3:
                 k=4
-                flag=True
 
         if hasAngle ==False:
             if k==2:
@@ -150,7 +148,6 @@ while capture.isOpened():
                     else:
                         myEquation += myValue
                 
-            flag=True
         # print(int(angle))
 
        
@@ -161,11 +158,11 @@ while capture.isOpened():
     except:
         pass
     
-    # if result[len(result)-1]=='=':
-    #    cv2.putText(frame, str(eval(result[:-1])), (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 0), 3)
+    if myEquation[len(myEquation)-1]=='=':
+       cv2.putText(frame, str(eval(myEquation[:-1])), (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 0), 3)
 
-    # else:
-    cv2.putText(frame, str(myEquation), (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 0), 2)
+    else:
+        cv2.putText(frame, str(myEquation), (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 0), 2)
 
     cTime=time.time()
     fps=1/(cTime-pTime)
@@ -176,7 +173,8 @@ while capture.isOpened():
     cv2.imshow("Gesture", frame)
     all_image = np.hstack((drawing, crop_image))
     cv2.imshow('Contours', all_image)
-
+    if cv2.waitKey(1) == ord('c'):
+        myEquation=' '
     # Close the camera if 'q' is pressed
     if cv2.waitKey(1) == ord('q'):
         break
