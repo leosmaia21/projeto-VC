@@ -114,11 +114,11 @@ while capture.isOpened():
                 
             else:
                 hasAngle =False
-        # k=0 mão aberta(>30º)
-        # k=1 mão a fechar antes de ter o valor (<30º)
-        # k=2 mão a fechar depois de ter o valor  (<30º)
-        # k=3 mão fechada (>30º)
-        # k=4 mão a abrir (<30º)
+        # k=0 mão aberta(>45º)
+        # k=1 mão a fechar antes de ter o valor (<45º)
+        # k=2 mão a fechar depois de ter o valor  (<45º)
+        # k=3 mão fechada (>45º)
+        # k=4 mão a abrir (<45º)
         if hasAngle ==True:
             if k==0:
                 k=1
