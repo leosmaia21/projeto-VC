@@ -1,4 +1,5 @@
 # Imports
+from wsgiref.validate import validator
 import numpy as np
 import cv2
 import math
@@ -23,12 +24,15 @@ for x in range(4):
 
 button1=Button((100,100),50,50,'7')
 auxStart=[]
-auxEnd=0j
+auxEnd=0
 auxFar=0
+k=0
 result=' '
 flag=False
-exist=False
-myEquation=''
+select=False
+canSelect=True
+hasAngle=False
+myEquation=' '
 while capture.isOpened():
 
     # Capture frames from the camera
@@ -104,32 +108,53 @@ while capture.isOpened():
             angle = int((math.acos((b ** 2 + c ** 2 - a ** 2) / (2 * b * c)) * 180) / 3.14)
             cv2.line(crop_image, start, end, [0, 255, 0], 2)
             # print(start[0])
-            
+            print(' angle:',angle)
             if angle<30:
-                break
-           
-            
-        if angle < 30:
-            if(flag == False):
-                auxStart=start
-                auxEnd=end
-                auxFar=far
-                cv2.circle(crop_image, start, 5, [255, 0, 0], -1)
-                cv2.circle(crop_image, end, 5, [255, 0, 0], -1)
-                cv2.circle(crop_image, far, 5, [0, 0, 255], -1)
-                for button in buttonList:
-                    myValue=button.getValue(auxStart[0],auxStart[1],angle)
-                    if myValue != 'x' :
-                        if(myValue=='='):
-                            myEquation = str(eval(myEquation))
-                        else:
-                            myEquation += myValue
-                    
+               hasAngle=True
+               auxStart=start
+               break
+                
+            else:
+                hasAngle =False
+        # k=0 mão aberta(>30º)
+        # k=1 mão a fechar antes de ter o valor (<30º)
+        # k=2 mão a fechar depois de ter o valor  (<30º)
+        # k=3 mão fechada (>30º)
+        # k=4 mão a abrir (<30º)
+        if hasAngle ==True:
+            if k==0:
+                k=1
+            elif k==3:
+                k=4
                 flag=True
-                # print(int(angle))
 
-        if (angle > 30) : 
-            flag = False
+        if hasAngle ==False:
+            if k==2:
+                k=3
+            elif k==4:
+                k=0
+               
+   
+        if k==1 :
+            cv2.circle(crop_image, start, 5, [255, 0, 0], -1)
+            cv2.circle(crop_image, end, 5, [255, 0, 0], -1)
+            cv2.circle(crop_image, far, 5, [0, 0, 255], -1)
+            for button in buttonList:
+                myValue=button.getValue(auxStart[0],auxStart[1],angle)
+                # if k==1:
+                if myValue != 'x' :
+                    k=2
+                    select=True
+                    # canSelect=False
+                    if(myValue=='='):
+                        myEquation = str(eval(myEquation))
+                    else:
+                        myEquation += myValue
+                
+            flag=True
+        # print(int(angle))
+
+       
 
         # if exist==False :
             
