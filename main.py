@@ -27,7 +27,8 @@ auxEnd=0j
 auxFar=0
 result=' '
 flag=False
-exist=True
+exist=False
+myEquation=''
 while capture.isOpened():
 
     # Capture frames from the camera
@@ -103,27 +104,32 @@ while capture.isOpened():
             angle = int((math.acos((b ** 2 + c ** 2 - a ** 2) / (2 * b * c)) * 180) / 3.14)
             cv2.line(crop_image, start, end, [0, 255, 0], 2)
             # print(start[0])
-            if(flag == False):
-                if angle < 30:
-                    auxStart=start
-                    auxEnd=end
-                    auxFar=far
-                    cv2.circle(crop_image, start, 5, [255, 0, 0], -1)
-                    cv2.circle(crop_image, end, 5, [255, 0, 0], -1)
-                    cv2.circle(crop_image, far, 5, [0, 0, 255], -1)
-                    for button in buttonList:
-                        x=button.getValue(auxStart[0],auxStart[1],angle)
-                        if x != 'x':
-                            result=result+str(x)
-                       
-                    flag=True
-                    # print(int(angle))
-
-            if (angle > 30) : 
-                flag = False
+            
+            if angle<30:
+                break
            
             
+        if angle < 30:
+            if(flag == False):
+                auxStart=start
+                auxEnd=end
+                auxFar=far
+                cv2.circle(crop_image, start, 5, [255, 0, 0], -1)
+                cv2.circle(crop_image, end, 5, [255, 0, 0], -1)
+                cv2.circle(crop_image, far, 5, [0, 0, 255], -1)
+                for button in buttonList:
+                    myValue=button.getValue(auxStart[0],auxStart[1],angle)
+                    if myValue != 'x' :
+                        if(myValue=='='):
+                            myEquation = str(eval(myEquation))
+                        else:
+                            myEquation += myValue
+                    
+                flag=True
+                # print(int(angle))
 
+        if (angle > 30) : 
+            flag = False
 
         # if exist==False :
             
@@ -131,10 +137,11 @@ while capture.isOpened():
     except:
         pass
     
-    if result[len(result)-1]=='=':
-        print('resultado:',eval(result[:-1]))
+    # if result[len(result)-1]=='=':
+    #    cv2.putText(frame, str(eval(result[:-1])), (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 0), 3)
 
-        break
+    # else:
+    cv2.putText(frame, str(myEquation), (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 0), 2)
 
     cTime=time.time()
     fps=1/(cTime-pTime)
