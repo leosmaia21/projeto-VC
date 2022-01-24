@@ -107,7 +107,7 @@ while capture.isOpened():
             cv2.line(crop_image, start, end, [0, 255, 0], 2)
             # print(start[0])
             print(' angle:',angle)
-            if angle<45:
+            if angle<40:
                hasAngle=True
                auxStart=start
                break
@@ -125,7 +125,7 @@ while capture.isOpened():
             elif k==3:
                 k=4
 
-        if hasAngle ==False:
+        else:
             if k==2:
                 k=3
             elif k==4:
@@ -146,6 +146,8 @@ while capture.isOpened():
                     if(myValue=='='):
                         myEquation = str(eval(myEquation))
                     else:
+                        if myEquation=='Erro':
+                            myEquation=''
                         myEquation += myValue
                 
         # print(int(angle))
@@ -156,11 +158,10 @@ while capture.isOpened():
             
         
     except:
-        pass
-    
+        myEquation='Erro'
+   
     if myEquation[len(myEquation)-1]=='=':
-       cv2.putText(frame, str(eval(myEquation[:-1])), (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 0), 3)
-
+        cv2.putText(frame, str(eval(myEquation[:-1])), (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 0), 3)
     else:
         cv2.putText(frame, str(myEquation), (100,100), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 0), 2)
 
